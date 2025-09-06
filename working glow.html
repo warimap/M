@@ -1,0 +1,472 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Pink Glowing Hexagons</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0F172A;
+            color: #F8FAFC;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+            overflow-x: hidden;
+        }
+        
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #3B82F6 100%);
+            --secondary-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+            --pink-glow: rgba(236, 72, 153, 0.8); /* Stronger pink glow */
+        }
+        
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .cta-button {
+            background: var(--secondary-gradient);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
+        }
+        
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%);
+            transition: all 0.3s ease;
+        }
+        
+        .cta-button:hover::after {
+            transform: translateY(-100%);
+        }
+        
+        /* Input field styling */
+        .input-field {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            border-color: #6366F1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+            outline: none;
+        }
+        
+        /* Islamic Pattern Styling */
+        .cta-section {
+            position: relative;
+        }
+        
+        .islamic-pattern-container {
+            position: absolute;
+            inset: 0;
+            opacity: 0.05;
+            transition: all 0.8s ease;
+            z-index: 0;
+        }
+        
+        /* The glow effect on hover - enhanced pink glow */
+        .cta-section:hover .islamic-pattern-container {
+            opacity: 0.4; /* Increased opacity for more visibility */
+        }
+        
+        /* Larger hexagon pattern */
+        .islamic-pattern-svg {
+            transition: all 0.8s ease;
+        }
+        
+        .cta-section:hover .islamic-pattern-svg {
+            filter: drop-shadow(0 0 15px rgba(236, 72, 153, 0.7)) 
+                   drop-shadow(0 0 30px rgba(236, 72, 153, 0.6));
+            transform: scale(1.1); /* Make pattern bigger on hover */
+        }
+        
+        /* Larger hexagons in the pattern */
+        #islamic-pattern path {
+            transform-origin: center;
+            transition: all 0.8s ease;
+        }
+        
+        .cta-section:hover #islamic-pattern path {
+            stroke: #EC4899; /* Pink color */
+            stroke-width: 3; /* Thicker stroke for more definition */
+            transform: scale(1.2); /* Make individual hexagons bigger */
+        }
+        
+        /* Success message */
+        .success-message {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Animated glow pulse with enhanced pink color */
+        @keyframes patternPulse {
+            0% { filter: drop-shadow(0 0 10px rgba(236, 72, 153, 0.5)); }
+            50% { filter: drop-shadow(0 0 25px rgba(236, 72, 153, 0.8)); }
+            100% { filter: drop-shadow(0 0 10px rgba(236, 72, 153, 0.5)); }
+        }
+        
+        .cta-section:hover .islamic-pattern-svg {
+            animation: patternPulse 3s infinite;
+        }
+        
+        /* Large individual hexagons */
+        .large-hexagon {
+            position: absolute;
+            opacity: 0;
+            transition: all 0.8s ease;
+            z-index: 1;
+            filter: drop-shadow(0 0 0px rgba(236, 72, 153, 0));
+        }
+        
+        .cta-section:hover .large-hexagon {
+            opacity: 0.7;
+            filter: drop-shadow(0 0 20px rgba(236, 72, 153, 0.8));
+        }
+        
+        /* Content box styling */
+        .content-box {
+            position: relative;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+        
+        .cta-section:hover .content-box {
+            transform: translateZ(20px);
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- CTA Section -->
+    <section class="cta-section py-16 relative overflow-hidden w-full">
+        <!-- Islamic Pattern Background with Larger Hexagons -->
+        <div class="islamic-pattern-container">
+            <svg xmlns="http://www.w3.org/2000/svg" class="islamic-pattern-svg" width="100%" height="100%" viewBox="0 0 800 800">
+                <defs>
+                    <pattern id="islamic-pattern" x="0" y="0" width="150" height="150" patternUnits="userSpaceOnUse">
+                        <!-- Larger hexagon pattern (150px instead of 100px) -->
+                        <path fill="none" stroke="#6366F1" stroke-width="1.5" d="M75 0L135 37.5L135 112.5L75 150L15 112.5L15 37.5z"></path>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#islamic-pattern)"></rect>
+            </svg>
+            
+            <!-- Large individual hexagons that will glow on hover -->
+            <div id="large-hexagons-container"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="content-box max-w-3xl mx-auto bg-gradient-to-br from-indigo-900/50 to-purple-900/50 rounded-3xl p-8 md:p-12 backdrop-blur-lg border border-indigo-500/20">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Be the first to access <span class="gradient-text">Sahal Wallet</span> when it drops</h2>
+                    <p class="text-gray-300">Join our exclusive waitlist and get early access to the future of halal finance.</p>
+                </div>
+                
+                <form id="waitlist-form" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="first-name" class="block text-sm font-medium text-white mb-1">First Name</label>
+                            <input type="text" id="first-name" name="first-name" class="input-field w-full px-4 py-3 rounded-lg" placeholder="Your first name" required>
+                        </div>
+                        <div>
+                            <label for="last-name" class="block text-sm font-medium text-white mb-1">Last Name</label>
+                            <input type="text" id="last-name" name="last-name" class="input-field w-full px-4 py-3 rounded-lg" placeholder="Your last name" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-white mb-1">Email Address</label>
+                        <input type="email" id="email" name="email" class="input-field w-full px-4 py-3 rounded-lg" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div>
+                        <label for="location" class="block text-sm font-medium text-white mb-1">Location</label>
+                        <select id="location" name="location" class="input-field w-full px-4 py-3 rounded-lg" required>
+                            <option value="" disabled selected>Select your location</option>
+                            <option value="london">England</option>
+                            <option value="mogadishu">Somalia</option>
+                            <option value="mombasa">Kenya</option>
+                            <option value="minneapolis">UAE</option>
+                            <option value="other">Asia</option>
+                        </select>
+                    </div>
+                    
+                    <div class="pt-2">
+                        <button type="submit" class="cta-button w-full text-white font-bold py-4 px-8 rounded-lg text-lg">
+                            Join the Waitlist
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="success-message" class="success-message mt-6 text-center p-4 bg-green-500/20 rounded-lg border border-green-500/30">
+                    <p class="text-green-300 font-medium">Thank you for joining our waitlist! We'll be in touch soon.</p>
+                </div>
+                
+                <!-- Futuristic Badge -->
+                <div class="mt-6 flex justify-center">
+                    <div class="flex items-center space-x-2 bg-indigo-500/20 px-4 py-2 rounded-full border border-indigo-500/30">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <span class="text-sm text-gray-300">Secured with blockchain technology</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Form submission
+        const waitlistForm = document.getElementById('waitlist-form');
+        const successMessage = document.getElementById('success-message');
+        
+        waitlistForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulate form submission
+            setTimeout(() => {
+                waitlistForm.style.display = 'none';
+                successMessage.style.display = 'block';
+            }, 1000);
+        });
+        
+        // Create large hexagons that will glow on hover
+        function createLargeHexagons() {
+            const container = document.getElementById('large-hexagons-container');
+            const numHexagons = 8; // Number of large hexagons
+            
+            for (let i = 0; i < numHexagons; i++) {
+                const hexagon = document.createElement('div');
+                hexagon.classList.add('large-hexagon');
+                
+                // Random position
+                const top = Math.random() * 100;
+                const left = Math.random() * 100;
+                
+                // Large size (200-400px)
+                const size = 200 + Math.random() * 200;
+                
+                // Style the hexagon
+                hexagon.style.position = 'absolute';
+                hexagon.style.top = `${top}%`;
+                hexagon.style.left = `${left}%`;
+                hexagon.style.width = `${size}px`;
+                hexagon.style.height = `${size}px`;
+                hexagon.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 60}deg)`;
+                
+                // Create SVG hexagon with pink color
+                hexagon.innerHTML = `
+                    <svg width="100%" height="100%" viewBox="0 0 100 100">
+                        <polygon points="50 0, 100 25, 100 75, 50 100, 0 75, 0 25" 
+                                 fill="none" 
+                                 stroke="#EC4899" 
+                                 stroke-width="3" />
+                    </svg>
+                `;
+                
+                container.appendChild(hexagon);
+                
+                // Add unique animation delay for each hexagon
+                hexagon.style.transitionDelay = `${i * 0.1}s`;
+            }
+        }
+        
+        // Enhanced interactive effect on mouse move with maximized pink glow
+        const ctaSection = document.querySelector('.cta-section');
+        const patternSvg = document.querySelector('.islamic-pattern-svg');
+        
+        ctaSection.addEventListener('mousemove', (e) => {
+            const rect = ctaSection.getBoundingClientRect();
+            const x = e.clientX - rect.left; // x position within the element
+            const y = e.clientY - rect.top;  // y position within the element
+            
+            // Calculate position as percentage
+            const xPercent = Math.round((x / rect.width) * 100);
+            const yPercent = Math.round((y / rect.height) * 100);
+            
+            // Calculate distance from center
+            const distanceFromCenter = Math.sqrt(
+                Math.pow((xPercent - 50) / 50, 2) + 
+                Math.pow((yPercent - 50) / 50, 2)
+            );
+            
+            // Adjust glow intensity based on mouse position
+            const glowIntensity = Math.max(0.6, 1 - distanceFromCenter * 0.5);
+            
+            // Apply dynamic pink glow effect - maximized
+            patternSvg.style.filter = `
+                drop-shadow(0 0 ${15 + glowIntensity * 15}px rgba(236, 72, 153, 0.7))
+                drop-shadow(0 0 ${25 + glowIntensity * 25}px rgba(236, 72, 153, 0.5))
+            `;
+            
+            // Subtle rotation and scale based on mouse position
+            const rotationDegree = ((xPercent - 50) / 50) * 2;
+            const scaleAmount = 1.05 + (glowIntensity * 0.1);
+            patternSvg.style.transform = `rotate(${rotationDegree}deg) scale(${scaleAmount})`;
+            
+            // Move large hexagons slightly based on mouse position
+            const largeHexagons = document.querySelectorAll('.large-hexagon');
+            largeHexagons.forEach((hexagon, index) => {
+                const moveX = ((xPercent - 50) / 50) * 20 * (index % 2 === 0 ? 1 : -1);
+                const moveY = ((yPercent - 50) / 50) * 20 * (index % 2 === 0 ? -1 : 1);
+                
+                hexagon.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px)) rotate(${Math.random() * 60 + moveX}deg)`;
+                
+                // Adjust glow intensity for each hexagon
+                const individualGlow = 0.6 + (Math.sin(Date.now() / 1000 + index) + 1) * 0.2;
+                hexagon.style.filter = `drop-shadow(0 0 ${20 + individualGlow * 15}px rgba(236, 72, 153, ${0.6 + individualGlow * 0.2}))`;
+            });
+        });
+        
+        // Add pulsing animation to hexagons
+        function addPulsingAnimation() {
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes hexagonPulse {
+                    0% { transform: scale(1); opacity: 0.5; }
+                    50% { transform: scale(1.1); opacity: 0.8; }
+                    100% { transform: scale(1); opacity: 0.5; }
+                }
+                
+                .cta-section:hover .large-hexagon svg {
+                    animation: hexagonPulse 3s infinite ease-in-out;
+                }
+                
+                .cta-section:hover .large-hexagon:nth-child(odd) svg {
+                    animation-delay: 0.5s;
+                }
+                
+                .cta-section:hover .large-hexagon:nth-child(even) svg {
+                    animation-delay: 1s;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Create dynamic glowing lines between hexagons
+        function createGlowingLines() {
+            const container = document.getElementById('large-hexagons-container');
+            const linesContainer = document.createElement('div');
+            linesContainer.classList.add('glowing-lines-container');
+            linesContainer.style.position = 'absolute';
+            linesContainer.style.inset = '0';
+            linesContainer.style.zIndex = '0';
+            linesContainer.style.opacity = '0';
+            linesContainer.style.transition = 'opacity 0.8s ease';
+            container.appendChild(linesContainer);
+            
+            // Add SVG for lines
+            linesContainer.innerHTML = `
+                <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0;">
+                    <defs>
+                        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#EC4899" stop-opacity="0.8"/>
+                            <stop offset="50%" stop-color="#DB2777" stop-opacity="0.6"/>
+                            <stop offset="100%" stop-color="#BE185D" stop-opacity="0.8"/>
+                        </linearGradient>
+                    </defs>
+                    <g class="lines-group"></g>
+                </svg>
+            `;
+            
+            // Show lines on hover
+            ctaSection.addEventListener('mouseenter', () => {
+                linesContainer.style.opacity = '1';
+                
+                // Connect hexagons with lines
+                setTimeout(() => {
+                    const hexagons = document.querySelectorAll('.large-hexagon');
+                    const linesGroup = document.querySelector('.lines-group');
+                    linesGroup.innerHTML = '';
+                    
+                    // Create lines between some hexagons
+                    for (let i = 0; i < hexagons.length - 1; i++) {
+                        const hex1 = hexagons[i].getBoundingClientRect();
+                        const hex2 = hexagons[i + 1].getBoundingClientRect();
+                        const containerRect = container.getBoundingClientRect();
+                        
+                        const x1 = hex1.left + hex1.width/2 - containerRect.left;
+                        const y1 = hex1.top + hex1.height/2 - containerRect.top;
+                        const x2 = hex2.left + hex2.width/2 - containerRect.left;
+                        const y2 = hex2.top + hex2.height/2 - containerRect.top;
+                        
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        line.setAttribute('d', `M${x1},${y1} L${x2},${y2}`);
+                        line.setAttribute('stroke', 'url(#lineGradient)');
+                        line.setAttribute('stroke-width', '2');
+                        line.setAttribute('stroke-dasharray', '10,5');
+                        line.setAttribute('fill', 'none');
+                        
+                        // Animate the line
+                        line.innerHTML = `
+                            <animate attributeName="stroke-dashoffset" from="0" to="30" dur="2s" repeatCount="indefinite" />
+                        `;
+                        
+                        linesGroup.appendChild(line);
+                    }
+                }, 300);
+            });
+            
+            ctaSection.addEventListener('mouseleave', () => {
+                linesContainer.style.opacity = '0';
+            });
+        }
+        
+        // Initialize all effects
+        createLargeHexagons();
+        addPulsingAnimation();
+        createGlowingLines();
+        
+        // Add a maximized glow effect to the entire section
+        function addMaximizedGlowEffect() {
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .cta-section::before {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    background: radial-gradient(circle at center, rgba(236, 72, 153, 0) 0%, rgba(236, 72, 153, 0) 60%, rgba(236, 72, 153, 0.1) 100%);
+                    opacity: 0;
+                    transition: opacity 1s ease;
+                    pointer-events: none;
+                    z-index: 1;
+                }
+                
+                .cta-section:hover::before {
+                    opacity: 1;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        addMaximizedGlowEffect();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'968c1eb2b6968a5f',t:'MTc1NDEyMjQ0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

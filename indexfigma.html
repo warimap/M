@@ -1,0 +1,2572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaniFintech Plus - Interactive Demo</title>
+    <style>
+        :root {
+            /* Nani Fintech Plus Brand Colors */
+            --brand-primary: 245 101% 59%; /* Modern blue */
+            --brand-secondary: 262 83% 58%; /* Purple accent */
+            --brand-accent: 217 91% 60%; /* Light blue */
+            --brand-gradient: linear-gradient(135deg, hsl(245, 101%, 59%) 0%, hsl(262, 83%, 58%) 50%, hsl(217, 91%, 60%) 100%);
+            
+            /* Fintech Specific Colors */
+            --fintech-blue: 217 91% 60%;
+            --fintech-purple: 262 83% 58%;
+            --fintech-indigo: 245 101% 59%;
+            --fintech-gold: 45 96% 53%;
+            
+            /* Dark theme base (Nani Fintech uses dark by default) */
+            --background: 222 84% 5%;
+            --foreground: 210 40% 98%;
+
+            --card: 222 84% 5%;
+            --card-foreground: 210 40% 98%;
+
+            --popover: 222 84% 5%;
+            --popover-foreground: 210 40% 98%;
+
+            --primary: 245 101% 59%;
+            --primary-foreground: 210 40% 98%;
+
+            --secondary: 217 33% 18%;
+            --secondary-foreground: 210 40% 98%;
+
+            --muted: 217 33% 18%;
+            --muted-foreground: 215 20% 65%;
+
+            --accent: 217 33% 18%;
+            --accent-foreground: 210 40% 98%;
+
+            --destructive: 0 63% 31%;
+            --destructive-foreground: 210 40% 98%;
+
+            --border: 217 33% 18%;
+            --input: 217 33% 18%;
+            --ring: 245 101% 59%;
+
+            --radius: 0.75rem;
+
+            /* Sidebar colors for dashboard (when needed) */
+            --sidebar-background: 222 84% 5%;
+            --sidebar-foreground: 210 40% 98%;
+            --sidebar-primary: 245 101% 59%;
+            --sidebar-primary-foreground: 210 40% 98%;
+            --sidebar-accent: 217 33% 18%;
+            --sidebar-accent-foreground: 210 40% 98%;
+            --sidebar-border: 217 33% 18%;
+            --sidebar-ring: 245 101% 59%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: hsl(var(--background));
+            position: relative;
+            z-index: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* Full-page glass overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Honeycomb pattern on top */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%236366F1' fill-opacity='0.05' d='M50 0L90 25L90 75L50 100L10 75L10 25z'/%3E%3C/svg%3E");
+            background-size: 50px 50px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Animated background particles */
+        .bg-particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 1s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 2s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 3s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 4s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 1.5s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 2.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+        }
+
+        .phone-container {
+            position: relative;
+            transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
+            animation: phoneFloat 4s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes phoneFloat {
+            0%, 100% { transform: perspective(1000px) rotateY(-5deg) rotateX(5deg) translateY(0px); }
+            50% { transform: perspective(1000px) rotateY(-5deg) rotateX(5deg) translateY(-10px); }
+        }
+
+        .phone {
+            width: 320px;
+            height: 640px;
+            background: linear-gradient(145deg, #c0c7d1, #9ca3af, #6b7280);
+            border-radius: 40px;
+            padding: 8px;
+            position: relative;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.25),
+                0 15px 30px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .phone::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #6b7280, #9ca3af, #c0c7d1, #9ca3af, #6b7280);
+            border-radius: 42px;
+            z-index: -1;
+        }
+
+        /* Reflection effect */
+        .phone::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(26, 26, 26, 0.3) 0%, transparent 50%);
+            border-radius: 40px;
+            transform: scaleY(-1);
+            opacity: 0.3;
+            filter: blur(2px);
+        }
+
+        /* Navigation dots */
+        .nav-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-dot.active {
+            background: white;
+            transform: scale(1.4);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+            border-color: white;
+        }
+
+        .nav-dot:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: scale(1.2);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Volume buttons */
+        .volume-up {
+            position: absolute;
+            left: -4px;
+            top: 120px;
+            width: 8px;
+            height: 35px;
+            background: linear-gradient(90deg, #9ca3af, #c0c7d1, #9ca3af);
+            border-radius: 4px 0 0 4px;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+                -2px 0 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .volume-down {
+            position: absolute;
+            left: -4px;
+            top: 165px;
+            width: 8px;
+            height: 35px;
+            background: linear-gradient(90deg, #9ca3af, #c0c7d1, #9ca3af);
+            border-radius: 4px 0 0 4px;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+                -2px 0 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Power button */
+        .power-button {
+            position: absolute;
+            right: -4px;
+            top: 140px;
+            width: 8px;
+            height: 50px;
+            background: linear-gradient(90deg, #9ca3af, #c0c7d1, #9ca3af);
+            border-radius: 0 4px 4px 0;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+                2px 0 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at top, hsl(222, 84%, 8%) 0%, hsl(222, 84%, 5%) 50%);
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+
+
+        /* Glass overlay for phone screen */
+        .screen-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(30, 41, 59, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1;
+            pointer-events: none;
+            border-radius: 32px;
+        }
+
+        /* Honeycomb pattern for phone screen */
+        .screen-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%236366F1' fill-opacity='0.03' d='M50 0L90 25L90 75L50 100L10 75L10 25z'/%3E%3C/svg%3E");
+            background-size: 30px 30px;
+            z-index: 2;
+            pointer-events: none;
+            border-radius: 32px;
+        }
+
+        .status-bar {
+            height: 44px;
+            background: var(--brand-gradient);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            position: relative;
+            z-index: 10;
+        }
+
+        .time {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .signal-bars {
+            display: flex;
+            gap: 2px;
+            align-items: flex-end;
+        }
+
+        .bar {
+            width: 3px;
+            background: white;
+            border-radius: 1px;
+        }
+
+        .bar:nth-child(1) { height: 4px; }
+        .bar:nth-child(2) { height: 6px; }
+        .bar:nth-child(3) { height: 8px; }
+        .bar:nth-child(4) { height: 10px; }
+
+        .network-type {
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 2px;
+        }
+
+        .wifi-icon {
+            width: 15px;
+            height: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .battery {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .battery-percentage {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .battery-icon {
+            width: 24px;
+            height: 12px;
+            border: 1px solid white;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .battery-icon::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            top: 3px;
+            width: 2px;
+            height: 6px;
+            background: white;
+            border-radius: 0 1px 1px 0;
+        }
+
+        .battery-fill {
+            width: 87%;
+            height: 100%;
+            background: white;
+            border-radius: 1px;
+        }
+
+
+
+        /* Screen slider container */
+        .screen-slider {
+            position: relative;
+            width: 100%;
+            height: calc(100% - 44px);
+            overflow: hidden;
+        }
+
+        .screen-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background: hsl(var(--background));
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .screen-content.active {
+            transform: translateX(0);
+            z-index: 15;
+        }
+
+        .screen-content:not(.active) {
+            transform: translateX(100%);
+        }
+
+        .screen-content.prev {
+            transform: translateX(-100%);
+        }
+
+        /* Home Screen */
+        .home-screen {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+            background: linear-gradient(135deg, 
+                hsl(222, 84%, 8%) 0%, 
+                hsl(245, 101%, 12%) 25%, 
+                hsl(262, 83%, 15%) 50%, 
+                hsl(217, 91%, 18%) 75%, 
+                hsl(222, 84%, 8%) 100%);
+            position: relative;
+        }
+
+        .home-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .home-screen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.02) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.02) 75%);
+            background-size: 30px 30px;
+            background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 25px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .app-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--brand-gradient);
+            border-radius: 20px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 
+                0 12px 40px rgba(79, 70, 229, 0.4),
+                0 4px 20px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .app-logo::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            background: var(--brand-gradient);
+            border-radius: 23px;
+            z-index: -1;
+            opacity: 0.6;
+            filter: blur(8px);
+            animation: logoGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            0% { opacity: 0.4; transform: scale(1); }
+            100% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .app-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            margin-bottom: 4px;
+        }
+
+        .app-subtitle {
+            font-size: 14px;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            flex: 1;
+            min-height: fit-content;
+            padding-bottom: 20px;
+            max-width: 100%;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 5;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(79, 70, 229, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .wallet .feature-icon { background: var(--brand-gradient); }
+        .zakat .feature-icon { background: linear-gradient(135deg, hsl(var(--fintech-gold)), hsl(45, 86%, 43%)); }
+        .halal .feature-icon { background: linear-gradient(135deg, hsl(var(--fintech-blue)), hsl(var(--fintech-purple))); }
+        .currency .feature-icon { background: linear-gradient(135deg, hsl(var(--brand-primary)), hsl(var(--brand-accent))); }
+        .esim .feature-icon { background: linear-gradient(135deg, hsl(var(--brand-secondary)), hsl(var(--fintech-purple))); }
+        .ayuto .feature-icon { background: linear-gradient(135deg, #ec4899, #8b5cf6); }
+        .starlink .feature-icon { background: linear-gradient(135deg, hsl(var(--fintech-indigo)), hsl(var(--brand-primary))); }
+
+        .feature-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: hsl(var(--card-foreground));
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+
+        .feature-desc {
+            font-size: 11px;
+            color: hsl(var(--muted-foreground));
+            line-height: 1.3;
+            text-align: center;
+        }
+
+        /* Splash Screen Styles */
+        .splash-screen {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--brand-gradient);
+            position: relative;
+            overflow: hidden;
+            padding: 40px 20px;
+        }
+
+        .splash-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .splash-screen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%);
+            background-size: 40px 40px;
+            background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .splash-content {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .splash-logo {
+            position: relative;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-10px) scale(1.05); }
+        }
+
+        .logo-icon {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 8px 30px rgba(255, 255, 255, 0.1),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: logoShimmer 4s linear infinite;
+        }
+
+        @keyframes logoShimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .splash-text {
+            color: white;
+            text-align: center;
+        }
+
+        .splash-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            letter-spacing: -0.5px;
+        }
+
+        .splash-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 500;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: dotPulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: 0s; }
+        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes dotPulse {
+            0%, 60%, 100% { 
+                transform: scale(1); 
+                opacity: 0.6; 
+            }
+            30% { 
+                transform: scale(1.4); 
+                opacity: 1; 
+            }
+        }
+
+        .enter-app-btn {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: hsl(var(--brand-primary));
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 20;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            white-space: nowrap;
+        }
+
+        .enter-app-btn:hover {
+            transform: translateX(-50%) translateY(-2px);
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .enter-app-btn:active {
+            transform: translateX(-50%) translateY(0px);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        /* Individual Screen Styles */
+        .detail-screen {
+            padding: 15px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, 
+                hsl(222, 84%, 8%) 0%, 
+                hsl(245, 101%, 12%) 25%, 
+                hsl(262, 83%, 15%) 50%, 
+                hsl(217, 91%, 18%) 75%, 
+                hsl(222, 84%, 8%) 100%);
+            position: relative;
+            overflow-y: auto;
+            gap: 15px;
+        }
+
+        .detail-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .detail-screen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.02) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.02) 75%);
+            background-size: 30px 30px;
+            background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .screen-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+            padding: 15px 18px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-right: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .screen-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            flex: 1;
+        }
+
+        .screen-indicator {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 8px;
+            margin-left: 10px;
+        }
+
+        .balance-card {
+            background: var(--brand-gradient);
+            border-radius: 18px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 0;
+            box-shadow: 
+                0 10px 30px hsla(var(--brand-primary), 0.3),
+                0 0 40px rgba(79, 70, 229, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            flex-shrink: 0;
+        }
+
+        .balance-card .balance-label {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .balance-card .balance-amount {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .currency-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .currency-tab {
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .currency-tab.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons.grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 0;
+            flex-shrink: 0;
+        }
+
+        .action-btn {
+            padding: 15px;
+            border-radius: 16px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .primary-btn {
+            background: var(--brand-gradient);
+            color: white;
+            box-shadow: 
+                0 4px 15px hsla(var(--brand-primary), 0.3),
+                0 0 30px rgba(79, 70, 229, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 8px 25px hsla(var(--brand-primary), 0.4),
+                0 0 40px rgba(79, 70, 229, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .secondary-btn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .secondary-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .feature-content {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-bottom: 20px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 0;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            position: relative;
+            z-index: 5;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(79, 70, 229, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .info-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .info-desc {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: hsl(var(--muted));
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--brand-gradient);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* AI Assistant Popup Styles */
+        .ai-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .ai-popup-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .ai-popup {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            0% { transform: translateY(50px) scale(0.9); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .ai-popup-header {
+            background: var(--brand-gradient);
+            padding: 20px;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-popup {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .close-popup:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .imam-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            animation: avatarPulse 2s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .imam-avatar::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .ai-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .ai-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .chat-container {
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.ai {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .message.user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .message-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 80%;
+            font-size: 14px;
+            line-height: 1.4;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-content {
+            background: var(--brand-gradient);
+            color: white;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #64748b;
+            animation: typingBounce 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .chat-input-container {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: hsl(var(--brand-primary));
+            box-shadow: 0 0 0 3px hsla(var(--brand-primary), 0.1);
+        }
+
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--brand-gradient);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quick-questions {
+            padding: 0 20px 15px;
+            background: #f8fafc;
+        }
+
+        .quick-question:hover {
+            border-color: hsl(var(--brand-primary));
+            color: hsl(var(--brand-primary));
+            transform: translateY(-1px);
+        }
+
+        /* Ayuto Group Savings Styles */
+        .ayuto-group-card {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 0;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            position: relative;
+            z-index: 5;
+            flex-shrink: 0;
+        }
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .group-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .group-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .group-name {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .group-details {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .group-status {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .progress-section {
+            margin-bottom: 20px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .progress-bar-ayuto {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill-ayuto {
+            width: 75%;
+            height: 100%;
+            background: linear-gradient(90deg, #ec4899, #8b5cf6);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .members-section {
+            overflow: hidden;
+        }
+
+        .members-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+
+        .members-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .members-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .members-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        .members-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .member-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .member-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+        }
+
+        .ayuto-contribute-btn {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            color: white;
+            box-shadow: 
+                0 4px 15px rgba(236, 72, 153, 0.3),
+                0 0 30px rgba(236, 72, 153, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ayuto-contribute-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 8px 25px rgba(236, 72, 153, 0.4),
+                0 0 40px rgba(236, 72, 153, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .phone {
+                width: 280px;
+                height: 560px;
+            }
+            
+            .phone-container {
+                transform: none;
+                animation: none;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .feature-card {
+                padding: 16px 12px;
+                min-height: 100px;
+            }
+
+            .feature-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+
+            .feature-title {
+                font-size: 12px;
+                margin-bottom: 4px;
+            }
+
+            .feature-desc {
+                font-size: 10px;
+            }
+
+            .ai-popup {
+                width: 95%;
+                max-height: 85vh;
+            }
+
+            .chat-container {
+                height: 250px;
+            }
+
+            .imam-avatar {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
+            }
+
+            .ai-title {
+                font-size: 16px;
+            }
+
+            .ai-subtitle {
+                font-size: 12px;
+            }
+
+            /* Ayuto responsive adjustments */
+            .ayuto-group-card {
+                padding: 16px;
+            }
+
+            .group-header {
+                gap: 10px;
+                margin-bottom: 16px;
+            }
+
+            .group-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .group-name {
+                font-size: 14px;
+            }
+
+            .group-details {
+                font-size: 11px;
+            }
+
+            .group-status {
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+
+            .progress-info {
+                font-size: 13px;
+            }
+
+            .member-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 11px;
+            }
+
+            .members-scroll {
+                gap: 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ai-popup {
+                width: 98%;
+                margin: 10px;
+            }
+
+            .chat-container {
+                height: 200px;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="phone-container">
+        <div class="phone">
+            <div class="volume-up"></div>
+            <div class="volume-down"></div>
+            <div class="power-button"></div>
+            
+            <div class="screen">
+                <div class="screen-overlay"></div>
+                <div class="screen-pattern"></div>
+
+                <div class="status-bar">
+                    <div class="status-left">
+                        <div class="signal-bars">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+                        <span class="network-type">5G</span>
+                        <div class="wifi-icon">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 9l11-7 11 7"/>
+                                <path d="M3 12l9-6 9 6"/>
+                                <path d="M5 15l7-4 7 4"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="time" id="live-time">9:41 AM</div>
+                    <div class="status-right">
+                        <div class="battery">
+                            <span class="battery-percentage">87%</span>
+                            <div class="battery-icon">
+                                <div class="battery-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="screen-slider">
+                    <!-- Splash Screen -->
+                    <div class="screen-content active" id="splash">
+                        <div class="splash-screen">
+                            <div class="splash-content">
+                                <div class="splash-logo">
+                                    <div class="logo-icon">N+</div> <!--add an image source-->
+                                </div>
+                                <div class="splash-text">
+                                    <h1 class="splash-title">NaniFintech Plus</h1>
+                                    <p class="splash-subtitle">Islamic Digital Banking</p>
+                                </div>
+                                <div class="loading-dots">
+                                    <div class="loading-dot"></div>
+                                    <div class="loading-dot"></div>
+                                    <div class="loading-dot"></div>
+                                </div>
+                            </div>
+                            <button class="enter-app-btn" onclick="playButtonSound(); showScreen('home')">
+                                Enter App
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Home Screen -->
+                    <div class="screen-content" id="home">
+                        <div class="home-screen">
+                            <div class="app-header">
+                                <div class="app-logo">N+</div>
+                                <h1 class="app-title">NaniFintech Plus</h1>
+                                <p class="app-subtitle">Your Financial Future, Simplified</p>
+                            </div>
+
+                            <div class="features-grid">
+                                <div class="feature-card wallet" onclick="playButtonSound(); showScreen('wallet')">
+                                    <div class="feature-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                            <line x1="1" y1="10" x2="23" y2="10"/>
+                                        </svg>
+                                    </div>
+                                    <div class="feature-title">Digital Wallet</div>
+                                    <div class="feature-desc">Send, receive & manage funds</div>
+                                </div>
+
+                                <div class="feature-card zakat" onclick="playButtonSound(); showScreen('zakat')">
+                                    <div class="feature-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="3"/>
+                                            <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+                                            <path d="m19.07 4.93-4.24 4.24m0 5.66 4.24 4.24M4.93 4.93l4.24 4.24m0 5.66-4.24 4.24"/>
+                                        </svg>
+                                    </div>
+                                    <div class="feature-title">AI Zakat Calculator</div>
+                                    <div class="feature-desc">Smart calculation with AI guidance</div>
+                                </div>
+
+                                <div class="feature-card halal" onclick="playButtonSound(); showScreen('halal')">
+                                    <div class="feature-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M9 12l2 2 4-4"/>
+                                            <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1h9zm0 0v7c0 .552-.448 1-1 1H10c-.552 0-1-.448-1-1v-7"/>
+                                        </svg>
+                                    </div>
+                                    <div class="feature-title">Halal Compliance</div>
+                                    <div class="feature-desc">Sharia-compliant transactions</div>
+                                </div>
+
+                                <div class="feature-card currency" onclick="playButtonSound(); showScreen('currency')">
+                                    <div class="feature-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <line x1="2" y1="12" x2="22" y2="12"/>
+                                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="feature-title">Multi-Currency</div>
+                                    <div class="feature-desc">GBP, USD, SOS support</div>
+                                </div>
+
+                                <div class="feature-card esim" onclick="playButtonSound(); showScreen('esim')">
+                                    <div class="feature-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                                            <line x1="12" y1="18" x2="12.01" y2="18"/>
+                                        </svg>
+                                    </div>
+                                    <div class="feature-title">eSIM & Gift Cards</div>
+                                    <div class="feature-desc">Digital services & rewards</div>
+                                </div>
+
+                                <div class="feature-card ayuto" onclick="playButtonSound(); showScreen('ayuto')">
+                                    <div class="feature-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="9" cy="7" r="4"/>
+                                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                        </svg>
+                                    </div>
+                                    <div class="feature-title">Ayuto Group Savings</div>
+                                    <div class="feature-desc">Community savings circles</div>
+                                </div>
+
+                                <div class="feature-card starlink" onclick="playButtonSound(); showScreen('starlink')">
+                                    <div class="feature-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="feature-title">Starlink Subscription</div>
+                                    <div class="feature-desc">Satellite internet access</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wallet Screen -->
+                    <div class="screen-content" id="wallet">
+                        <div class="detail-screen">
+                            
+                            <div class="balance-card">
+                                <div class="balance-label">Total Balance</div>
+                                <div class="balance-amount">£2,450.00</div>
+                                <div class="currency-tabs">
+                                    <div class="currency-tab active">GBP</div>
+                                    <div class="currency-tab">USD</div>
+                                    <div class="currency-tab">SOS</div>
+                                </div>
+                            </div>
+
+                            <div class="action-buttons grid">
+                                <button class="action-btn primary-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="7" y1="17" x2="17" y2="7"/>
+                                        <polyline points="7,7 17,7 17,17"/>
+                                    </svg>
+                                    Send Money
+                                </button>
+                                <button class="action-btn secondary-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="17" y1="7" x2="7" y2="17"/>
+                                        <polyline points="17,17 7,17 7,7"/>
+                                    </svg>
+                                    Receive
+                                </button>
+                            </div>
+
+                            <div class="feature-content">
+                                <div class="info-card">
+                                    <div class="info-title">Recent Transactions</div>
+                                    <div class="info-desc">• Payment to Ahmed - £50.00<br>• Top-up from bank - £200.00<br>• Zakat payment - £125.00</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title">KYC Status</div>
+                                    <div class="info-desc">Identity verification completed ✅</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Zakat Calculator Screen -->
+                    <div class="screen-content" id="zakat">
+                        <div class="detail-screen">
+
+                            <div class="info-card">
+                                <div class="info-title">Your Zakat Calculation</div>
+                                <div class="info-desc">Based on your assets and Islamic guidelines</div>
+                                <div class="balance-amount" style="color: #f59e0b; font-size: 24px; margin: 15px 0;">£125.50</div>
+                            </div>
+
+                            <div class="action-buttons grid">
+                                <button class="action-btn primary-btn" onclick="openAIAssistant()">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1.5 3 3 3s3-1.5 3-3a3 3 0 0 0-3-3z"/>
+                                        <path d="M21 9H3l1.5 13h15L21 9z"/>
+                                        <path d="M12 7v5"/>
+                                    </svg>
+                                    Ask AI Assistant
+                                </button>
+                                <button class="action-btn secondary-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                        <line x1="1" y1="10" x2="23" y2="10"/>
+                                    </svg>
+                                    Pay Zakat
+                                </button>
+                            </div>
+
+                            <div class="feature-content">
+                                <div class="info-card">
+                                    <div class="info-title">AI Guidance Available</div>
+                                    <div class="info-desc">Get personalized advice on Zakat calculations, Islamic finance principles, and compliance questions through our ChatGPT integration.</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title">Calculation Breakdown</div>
+                                    <div class="info-desc">• Cash & Savings: £2,450<br>• Gold & Silver: £560<br>• Business Assets: £1,200<br>• Zakat Rate: 2.5%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Halal Compliance Screen -->
+                    <div class="screen-content" id="halal">
+                        <div class="detail-screen">
+
+                            <div class="info-card">
+                                <div class="info-title">Sharia Compliance Status</div>
+                                <div class="info-desc">All transactions are verified for Islamic compliance</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                            </div>
+
+                            <div class="feature-content">
+                                <div class="info-card">
+                                    <div class="info-title">Halal Token Logic</div>
+                                    <div class="info-desc">Our system automatically flags and prevents transactions involving prohibited activities like gambling, alcohol, or interest-based lending.</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title">AML Monitoring</div>
+                                    <div class="info-desc">Advanced anti-money laundering triggers ensure all transactions meet both Islamic and regulatory compliance standards.</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title">Certified Partners</div>
+                                    <div class="info-desc">We only work with Sharia-compliant financial institutions and service providers.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Multi-Currency Screen -->
+                    <div class="screen-content" id="currency">
+                        <div class="detail-screen">
+
+                            <div class="info-card">
+                                <div class="info-title">Currency Balances</div>
+                                <div class="info-desc">
+                                    • GBP: £2,450.00<br>
+                                    • USD: $3,125.50<br>
+                                    • SOS: 1,425,000 Sh
+                                </div>
+                            </div>
+
+                            <div class="action-buttons grid">
+                                <button class="action-btn primary-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="23,4 23,10 17,10"/>
+                                        <polyline points="1,20 1,14 7,14"/>
+                                        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+                                    </svg>
+                                    Exchange
+                                </button>
+                                <button class="action-btn secondary-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="18" y1="20" x2="18" y2="10"/>
+                                        <line x1="12" y1="20" x2="12" y2="4"/>
+                                        <line x1="6" y1="20" x2="6" y2="14"/>
+                                    </svg>
+                                    Rates
+                                </button>
+                            </div>
+
+                            <div class="feature-content">
+                                <div class="info-card">
+                                    <div class="info-title">Live Exchange Rates</div>
+                                    <div class="info-desc">• GBP/USD: 1.2750 ↑<br>• GBP/SOS: 9,850.00 ↓<br>• USD/SOS: 7,725.50 →<br>Last updated: 2 mins ago</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title">Somalia Remittance</div>
+                                    <div class="info-desc">Send money directly to mobile wallets in Somalia with competitive rates and instant delivery.</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title">Multi-Currency Cards</div>
+                                    <div class="info-desc">Virtual and physical cards supporting all three currencies with real-time conversion.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- eSIM & Gift Cards Screen -->
+                    <div class="screen-content" id="esim">
+                        <div class="detail-screen">
+
+                            <div class="action-buttons grid">
+                                <button class="action-btn primary-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                                        <line x1="12" y1="18" x2="12.01" y2="18"/>
+                                    </svg>
+                                    Buy eSIM
+                                </button>
+                                <button class="action-btn secondary-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20,6 9,17 4,12"/>
+                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                    </svg>
+                                    Gift Cards
+                                </button>
+                            </div>
+
+                            <div class="feature-content">
+                                <div class="info-card">
+                                    <div class="info-title">Global eSIM Plans</div>
+                                    <div class="info-desc">Stay connected worldwide with our eSIM data plans. Perfect for travel and international business.<br><br>• Europe 30 Days - £25.00<br>• USA 15 Days - £18.50<br>• Somalia 7 Days - £12.00<br>• Global 30 Days - £45.00</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title">Digital Gift Cards</div>
+                                    <div class="info-desc">Purchase gift cards for popular retailers and services. Send gifts instantly to family and friends.<br><br>• Amazon UK - £10-£500<br>• Apple Store - £15-£200<br>• Google Play - £10-£100<br>• Steam Gaming - £20-£250</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title">API Integration Ready</div>
+                                    <div class="info-desc">Seamless integration with major eSIM and gift card providers for instant delivery via QR code or email activation.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ayuto Group Savings Screen -->
+                    <div class="screen-content" id="ayuto">
+                        <div class="detail-screen">
+
+                            <!-- Current Group Card -->
+                            <div class="ayuto-group-card">
+                                <div class="group-header">
+                                    <div class="group-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="9" cy="7" r="4"/>
+                                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                        </svg>
+                                    </div>
+                                    <div class="group-info">
+                                        <div class="group-name">Hajj Savings Circle</div>
+                                        <div class="group-details">8 members • Your turn: Round 3</div>
+                                    </div>
+                                    <div class="group-status">Active</div>
+                                </div>
+                                
+                                <div class="progress-section">
+                                    <div class="progress-info">
+                                        <span>£1,500 / £2,000</span>
+                                        <span>75%</span>
+                                    </div>
+                                    <div class="progress-bar-ayuto">
+                                        <div class="progress-fill-ayuto"></div>
+                                    </div>
+                                </div>
+
+                                <div class="members-section">
+                                    <div class="members-scroll">
+                                        <div class="member-avatar">A</div>
+                                        <div class="member-avatar">S</div>
+                                        <div class="member-avatar">M</div>
+                                        <div class="member-avatar">F</div>
+                                        <div class="member-avatar">H</div>
+                                        <div class="member-avatar">K</div>
+                                        <div class="member-avatar">L</div>
+                                        <div class="member-avatar">Y</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-buttons grid">
+                                <button class="action-btn ayuto-contribute-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="1" x2="12" y2="23"/>
+                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                    </svg>
+                                    Contribute
+                                </button>
+                                <button class="action-btn secondary-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                    </svg>
+                                    Join Group
+                                </button>
+                            </div>
+
+                            <div class="feature-content">
+                                <div class="info-card">
+                                    <div class="info-title">How Ayuto Works</div>
+                                    <div class="info-desc">Ayuto is a traditional Somali savings system where group members contribute regularly and take turns receiving the full pot. Perfect for saving for Hajj, weddings, or business investments.</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title">Your Groups</div>
+                                    <div class="info-desc">• Hajj Savings Circle - £250/month (Active)<br>• Wedding Fund Group - £150/month (Pending)<br>• Business Investment Pool - £500/month (Completed)</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title">Create New Group</div>
+                                    <div class="info-desc">Start your own Ayuto circle with friends and family. Set contribution amounts, payment schedules, and invite trusted members to join your savings journey.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Starlink Subscription Screen -->
+                    <div class="screen-content" id="starlink">
+                        <div class="detail-screen">
+
+                            <div class="info-card">
+                                <div class="info-title">Satellite Internet Access</div>
+                                <div class="info-desc">High-speed internet anywhere in the world via Starlink satellite network</div>
+                                <div class="balance-amount" style="color: #0ea5e9; font-size: 24px; margin: 15px 0;">£89.00/month</div>
+                            </div>
+
+                            <div class="action-buttons grid">
+                                <button class="action-btn primary-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/>
+                                    </svg>
+                                    Subscribe
+                                </button>
+                                <button class="action-btn secondary-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    Coverage
+                                </button>
+                            </div>
+
+                            <div class="feature-content">
+                                <div class="info-card">
+                                    <div class="info-title">Global Coverage</div>
+                                    <div class="info-desc">Access high-speed internet in remote areas where traditional broadband isn't available. Perfect for Somalia and other underserved regions.</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title">Flexible Plans</div>
+                                    <div class="info-desc">Choose from residential, mobile, or business plans to suit your connectivity needs. Equipment included with professional installation available.</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title">Coming Soon</div>
+                                    <div class="info-desc">Starlink integration will be available in Q2 2024. Pre-register now to secure your spot and get early access pricing.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Dots -->
+        <div class="nav-dots">
+            <div class="nav-dot active" onclick="playButtonSound(); showScreen('splash')"></div>
+            <div class="nav-dot" onclick="playButtonSound(); showScreen('home')"></div>
+            <div class="nav-dot" onclick="playButtonSound(); showScreen('wallet')"></div>
+            <div class="nav-dot" onclick="playButtonSound(); showScreen('zakat')"></div>
+            <div class="nav-dot" onclick="playButtonSound(); showScreen('halal')"></div>
+            <div class="nav-dot" onclick="playButtonSound(); showScreen('currency')"></div>
+            <div class="nav-dot" onclick="playButtonSound(); showScreen('esim')"></div>
+            <div class="nav-dot" onclick="playButtonSound(); showScreen('ayuto')"></div>
+            <div class="nav-dot" onclick="playButtonSound(); showScreen('starlink')"></div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Popup -->
+    <div class="ai-popup-overlay" id="aiPopup">
+        <div class="ai-popup">
+            <div class="ai-popup-header">
+                <button class="close-popup" onclick="closeAIAssistant()">×</button>
+                <div class="imam-avatar">🧙‍♂️</div>
+                <div class="ai-title">AI Islamic Scholar</div>
+                <div class="ai-subtitle">How can I assist you today?</div>
+            </div>
+            
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai">
+                        <div class="message-avatar">🧙‍♂️</div>
+                        <div class="message-content">
+                            Assalamu Alaikum! I'm here to help you with Zakat calculations, Islamic finance principles, and any questions about Sharia compliance. How may I assist you?
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="message-avatar">🧙‍♂️</div>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-questions">
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 10px;">Quick Questions:</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <button class="quick-question" onclick="askQuickQuestion('How is Zakat calculated?')" style="padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 15px; background: white; font-size: 11px; cursor: pointer; transition: all 0.3s ease;">How is Zakat calculated?</button>
+                    <button class="quick-question" onclick="askQuickQuestion('What assets are subject to Zakat?')" style="padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 15px; background: white; font-size: 11px; cursor: pointer; transition: all 0.3s ease;">What assets are subject to Zakat?</button>
+                    <button class="quick-question" onclick="askQuickQuestion('When should I pay Zakat?')" style="padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 15px; background: white; font-size: 11px; cursor: pointer; transition: all 0.3s ease;">When should I pay Zakat?</button>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything about Islamic finance..." onkeypress="handleKeyPress(event)">
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        <span>→</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentScreen = 'splash';
+        const screens = ['splash', 'home', 'wallet', 'zakat', 'halal', 'currency', 'esim', 'ayuto', 'starlink'];
+
+        // Audio Context for sound effects
+        let audioContext;
+        let soundEnabled = true;
+
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+                console.log('Web Audio API not supported');
+                soundEnabled = false;
+            }
+        }
+
+        function playNavigationSound() {
+            if (!soundEnabled || !audioContext) return;
+            
+            // Create a pleasant navigation sound
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Create a pleasant "swipe" sound
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+            
+            oscillator.type = 'sine';
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.15);
+        }
+
+        function playButtonSound() {
+            if (!soundEnabled || !audioContext) return;
+            
+            // Create a button click sound
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(1000, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.05);
+            
+            gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.08);
+            
+            oscillator.type = 'square';
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.08);
+        }
+
+        function updateNavDots(activeScreen) {
+            const dots = document.querySelectorAll('.nav-dot');
+            const screenIndex = screens.indexOf(activeScreen);
+            
+            dots.forEach((dot, index) => {
+                dot.classList.remove('active');
+                if (index === screenIndex) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+
+        function showScreen(screenName) {
+            // Play navigation sound
+            playNavigationSound();
+            
+            // Hide all screens first
+            const allScreens = document.querySelectorAll('.screen-content');
+            allScreens.forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            // Show the target screen
+            const targetScreen = document.getElementById(screenName);
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+            }
+
+            // Update navigation dots
+            updateNavDots(screenName);
+            currentScreen = screenName;
+        }
+
+        // AI Assistant Functions
+        function openAIAssistant() {
+            const popup = document.getElementById('aiPopup');
+            popup.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus on input after animation
+            setTimeout(() => {
+                document.getElementById('chatInput').focus();
+            }, 400);
+        }
+
+        function closeAIAssistant() {
+            const popup = document.getElementById('aiPopup');
+            popup.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Simulate AI response
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = generateAIResponse(message);
+                addMessage(response, 'ai');
+            }, 1500 + Math.random() * 1000);
+        }
+
+        function askQuickQuestion(question) {
+            const input = document.getElementById('chatInput');
+            input.value = question;
+            sendMessage();
+        }
+
+        function addMessage(content, type) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            if (type === 'ai') {
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">🧙‍♂️</div>
+                    <div class="message-content">${content}</div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="message-content">${content}</div>
+                `;
+            }
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateAIResponse(message) {
+            const responses = {
+                'zakat': 'Zakat is calculated at 2.5% of your qualifying wealth (nisab) that you\'ve held for a full lunar year. The current nisab is approximately £400 based on silver prices.',
+                'calculation': 'To calculate Zakat: Add up your cash, savings, gold, silver, and business assets. If the total exceeds the nisab threshold and you\'ve held it for a year, pay 2.5% as Zakat.',
+                'assets': 'Assets subject to Zakat include: Cash and savings, Gold and silver jewelry, Business inventory, Stocks and investments, and money owed to you that you expect to receive.',
+                'when': 'Zakat should be paid once a year when your wealth has been above the nisab threshold for a complete lunar year (354 days). Many people choose to pay during Ramadan.',
+                'halal': 'Halal investments avoid interest (riba), gambling (maysir), and excessive uncertainty (gharar). Focus on Sharia-compliant stocks, sukuk bonds, and ethical business ventures.',
+                'default': 'That\'s a great question about Islamic finance. Based on Islamic principles, I recommend consulting with a qualified Islamic scholar for specific rulings. Is there a particular aspect of Zakat or Islamic finance you\'d like to explore further?'
+            };
+            
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('zakat') || lowerMessage.includes('calculate')) {
+                return responses.zakat;
+            } else if (lowerMessage.includes('how') && lowerMessage.includes('calculate')) {
+                return responses.calculation;
+            } else if (lowerMessage.includes('assets') || lowerMessage.includes('what')) {
+                return responses.assets;
+            } else if (lowerMessage.includes('when') || lowerMessage.includes('time')) {
+                return responses.when;
+            } else if (lowerMessage.includes('halal') || lowerMessage.includes('haram')) {
+                return responses.halal;
+            } else {
+                return responses.default;
+            }
+        }
+
+        function showTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            indicator.classList.add('active');
+            
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            indicator.classList.remove('active');
+        }
+
+        // Live time functionality
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            document.getElementById('live-time').textContent = timeString;
+        }
+
+        // Add swipe functionality for mobile
+        let startX = 0;
+        let startY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (!startX || !startY) return;
+
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+
+            const diffX = startX - endX;
+            const diffY = startY - endY;
+
+            // Only trigger swipe if horizontal movement is greater than vertical
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                const currentIndex = screens.indexOf(currentScreen);
+                
+                if (diffX > 0 && currentIndex < screens.length - 1) {
+                    // Swipe left - next screen
+                    showScreen(screens[currentIndex + 1]);
+                } else if (diffX < 0 && currentIndex > 0) {
+                    // Swipe right - previous screen
+                    showScreen(screens[currentIndex - 1]);
+                }
+            }
+
+            startX = 0;
+            startY = 0;
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const currentIndex = screens.indexOf(currentScreen);
+            
+            if (e.key === 'ArrowRight' && currentIndex < screens.length - 1) {
+                showScreen(screens[currentIndex + 1]);
+            } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                showScreen(screens[currentIndex - 1]);
+            } else if (e.key === 'Escape') {
+                if (document.getElementById('aiPopup').classList.contains('active')) {
+                    closeAIAssistant();
+                } else {
+                    showScreen('home');
+                }
+            }
+        });
+
+
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize audio
+            initAudio();
+            
+            // Start live clock
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Close AI popup when clicking outside
+            document.getElementById('aiPopup').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeAIAssistant();
+                }
+            });
+            
+            // Initialize audio on first user interaction
+            document.addEventListener('click', function initAudioOnClick() {
+                initAudio();
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                document.removeEventListener('click', initAudioOnClick);
+            }, { once: true });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a6644e33e28a67',t:'MTc1NzA4MjI4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
